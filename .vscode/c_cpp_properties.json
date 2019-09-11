@@ -5,7 +5,10 @@
             "includePath": [
                 "/opt/ros/dashing/include",
                 "${workspaceFolder}/include",
-                "${workspaceFolder}/../../install/controller_parameter_server/include"
+                "${workspaceFolder}/../../install/controller_parameter_server/include",
+                "${workspaceFolder}/../../install/parameter_server_interfaces/include"
+                
+                
             ],
             "intelliSenseMode": "gcc-x64",
             "compilerPath": "/usr/bin/gcc",

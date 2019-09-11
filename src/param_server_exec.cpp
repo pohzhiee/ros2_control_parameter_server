@@ -1,5 +1,6 @@
 #include <memory>
 #include <controller_parameter_server/parameter_server.hpp>
+#include <parameter_server/parameter_server.hpp>
 
 void
 print_usage()
@@ -17,7 +18,7 @@ int main(int argc, char ** argv)
     return -1;
   }
 
-  auto ps = std::make_shared<controller_parameter_server::ParameterServer>();
+  auto ps = std::make_shared<parameter_server::ParameterServer>();
   ps->load_parameters(argv[1]);
 
   rclcpp::spin(ps);
