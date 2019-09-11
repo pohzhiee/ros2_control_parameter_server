@@ -1,0 +1,26 @@
+#include <memory>
+#include <controller_parameter_server/parameter_server.hpp>
+
+void
+print_usage()
+{
+  fprintf(stderr, "lobot_param_server [yaml1.file ... yamlN.file]\n");
+}
+
+int main(int argc, char ** argv)
+{
+  rclcpp::init(argc, argv);
+
+  if (argc < 2) {
+    fprintf(stderr, "Missing arguments. No yaml files were given\n");
+    print_usage();
+    return -1;
+  }
+
+  auto ps = std::make_shared<controller_parameter_server::ParameterServer>();
+  ps->load_parameters(argv[1]);
+
+  rclcpp::spin(ps);
+  rclcpp::shutdown();
+  return 0;
+}
