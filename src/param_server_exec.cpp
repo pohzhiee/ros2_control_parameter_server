@@ -10,6 +10,7 @@ print_usage()
 
 int main(int argc, char ** argv)
 {
+  // fprintf(stderr, "Arg: %s", argv[1]);
   rclcpp::init(argc, argv);
 
   if (argc < 2) {
@@ -17,7 +18,6 @@ int main(int argc, char ** argv)
     print_usage();
     return -1;
   }
-
   auto ps = std::make_shared<parameter_server::ParameterServer>();
   ps->load_parameters(argv[1]);
 

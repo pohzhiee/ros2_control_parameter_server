@@ -2,7 +2,8 @@
     "files.associations": {
         "*.xacro": "xml",
         "chrono": "cpp",
-        "*.ipp": "cpp"
+        "*.ipp": "cpp",
+        "*.tcc": "cpp"
     },
     "python.autoComplete.extraPaths": [
         "/opt/ros/dashing/lib/python3.6/site-packages"

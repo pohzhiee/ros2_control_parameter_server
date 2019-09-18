@@ -1,0 +1,32 @@
+{
+    // Use IntelliSense to learn about possible attributes.
+    // Hover to view descriptions of existing attributes.
+    // For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug param_lister",
+            "type": "cppdbg",
+            "request": "launch",
+            "program": "/home/pohzhiee/lobot_ros2/install/my_parameter_server/lib/my_parameter_server/param_server_exec",
+            "args": ["/home/pohzhiee/lobot_ros2/src/lobot_control_main/config/params.yaml"],
+            "stopAtEntry": false,
+            "cwd": "${workspaceFolder}",
+            "environment": [
+                {
+                    "name": "LD_LIBRARY_PATH",
+                    "value": "/opt/ros/dashing/opt/yaml_cpp_vendor/lib:/opt/ros/dashing/opt/rviz_ogre_vendor/lib:/usr/lib/x86_64-linux-gnu/gazebo-9/plugins:/home/pohzhiee/lobot_ros2/install/controller_manager/lib:/home/pohzhiee/lobot_ros2/install/hardware_interface/lib:/home/pohzhiee/lobot_ros2/install/controller_interface/lib:/home/pohzhiee/lobot_ros2/install/ros_controllers/lib:/opt/ros/dashing/lib:/home/pohzhiee/lobot_ros2/install/parameter_server_interfaces/lib:/home/pohzhiee/lobot_ros2/install/controller_parameter_server/lib:/home/pohzhiee/lobot_ros2/install/my_parameter_server/lib"
+                }
+            ],
+            "externalConsole": false,
+            "MIMode": "gdb",
+            "setupCommands": [
+                {
+                    "description": "Enable pretty-printing for gdb",
+                    "text": "-enable-pretty-printing",
+                    "ignoreFailures": true
+                }
+            ]
+        }
+    ]
+}
