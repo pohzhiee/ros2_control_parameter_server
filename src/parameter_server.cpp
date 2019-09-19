@@ -56,13 +56,13 @@ void ParameterServer::handle_GetControllerJoints(const std::shared_ptr<rmw_reque
     std::vector<std::string> joints = {};
     for (auto &param : param_list.names)
     {
-        if(param.find(request->controller_name+".joints") != std::string::npos){
+        if(param.find(request->controller+".joints") != std::string::npos){
             auto jointParam = this->get_parameter(param);
             joints.push_back(jointParam.value_to_string());
         }
     }
     response->joints = joints;
-    RCLCPP_INFO(this->get_logger(), "Joints for controller %s: ", request->controller_name.c_str());
+    RCLCPP_INFO(this->get_logger(), "Joints for controller %s: ", request->controller.c_str());
     for(auto &j : joints){
         RCLCPP_INFO(this->get_logger(), "%s", j.c_str());
     }
