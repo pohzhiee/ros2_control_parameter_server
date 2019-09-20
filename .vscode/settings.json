@@ -3,7 +3,8 @@
         "*.xacro": "xml",
         "chrono": "cpp",
         "*.ipp": "cpp",
-        "*.tcc": "cpp"
+        "*.tcc": "cpp",
+        "random": "cpp"
     },
     "python.autoComplete.extraPaths": [
         "/opt/ros/dashing/lib/python3.6/site-packages"

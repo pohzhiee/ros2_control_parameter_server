@@ -2,9 +2,20 @@
 
 #include <algorithm>
 #include <string>
+#include <sstream>
 
 namespace parameter_server
 {
+// Helper function
+bool to_bool(std::string str) {
+    std::transform(str.begin(), str.end(), str.begin(), ::tolower);
+    std::istringstream is(str);
+    bool b;
+    is >> std::boolalpha >> b;
+    return b;
+}
+
+
 using namespace std::placeholders;
 ParameterServer::ParameterServer() : controller_parameter_server::ParameterServer()
 {
@@ -19,6 +30,9 @@ ParameterServer::ParameterServer() : controller_parameter_server::ParameterServe
 
     auto fcn4 = std::bind(&ParameterServer::handle_GetRobots, this, _1, _2, _3);
     get_robots_srv_ = this->create_service<GetRobots>("GetRobots", fcn4, rmw_qos_profile_services_default);
+
+    auto fcn5 = std::bind(&ParameterServer::handle_GetControllerPid, this, _1, _2, _3);
+    get_controller_pid_srv_ = this->create_service<GetControllerPid>("GetControllerPid", fcn5, rmw_qos_profile_services_default);
 }
 
 void ParameterServer::handle_GetAllJoints(const std::shared_ptr<rmw_request_id_t> request_header,
@@ -136,7 +150,6 @@ void ParameterServer::handle_GetControllerJoints(const std::shared_ptr<rmw_reque
                                                  const std::shared_ptr<GetControllerJoints::Request> request, const std::shared_ptr<GetControllerJoints::Response> response)
 {
     (void)request_header;
-    (void)response;
     auto param_list = this->list_parameters({""}, 10);
     std::vector<std::string> joints = {};
     for (auto &param : param_list.names)
@@ -154,7 +167,6 @@ void ParameterServer::handle_GetControllerJoints(const std::shared_ptr<rmw_reque
     //     RCLCPP_INFO(this->get_logger(), "%s", j.c_str());
     // }
 }
-
 void ParameterServer::handle_GetControllers(const std::shared_ptr<rmw_request_id_t> request_header,
                                             const std::shared_ptr<GetControllers::Request> request, const std::shared_ptr<GetControllers::Response> response)
 {
@@ -233,4 +245,74 @@ void ParameterServer::handle_GetRobots(const std::shared_ptr<rmw_request_id_t> r
     response->robots = robotNames;
 }
 
-} // namespace parameter_server
+void ParameterServer::handle_GetControllerPid(const std::shared_ptr<rmw_request_id_t> request_header,  
+const std::shared_ptr<GetControllerPid::Request> request,  const std::shared_ptr<GetControllerPid::Response> response){
+    (void)request_header;
+    auto param_list = this->list_parameters({""}, 10);
+    std::vector<std::string> joints = {};
+
+    for (auto &param : param_list.names)
+    {
+        if (param.find(request->controller + ".pid") != std::string::npos)
+        {
+            // Get the specific parameter (p,i,d,i_min,i_max or antiwindup)
+            std::vector<size_t> dotPos = {};
+            for (size_t i = 0; i < param.size(); i++)
+            {
+                if (param[i] == '.')
+                {
+                    dotPos.push_back(i);
+                }
+            }
+            // If less than 3 dots definitely not the correct parameter, so we continue to the next param
+            // This also makes it such that our code below which accesses by index is safe
+            if(dotPos.size() <3){
+                continue;
+            }
+            auto endPos = dotPos.size()-1;
+            auto pidParamName = param.substr(dotPos[endPos] + 1, param.size() - dotPos[endPos] - 1);
+            if(pidParamName.compare("p") == 0){
+                auto pidParam = this->get_parameter(param);
+                auto pValStr = pidParam.value_to_string();
+                RCLCPP_INFO(this->get_logger(), "p: %s", pValStr.c_str());
+                response->p = std::stod(pValStr);
+            }
+            else if(pidParamName.compare("i") == 0){
+                auto pidParam = this->get_parameter(param);
+                auto iValStr = pidParam.value_to_string();
+                RCLCPP_INFO(this->get_logger(), "i: %s", iValStr.c_str());
+                response->i = std::stod(iValStr);
+            }
+            else if(pidParamName.compare("d") == 0){
+                auto pidParam = this->get_parameter(param);
+                auto dValStr = pidParam.value_to_string();
+                RCLCPP_INFO(this->get_logger(), "d: %s", dValStr.c_str());
+                response->d = std::stod(dValStr);
+            }
+            else if(pidParamName.compare("i_min") == 0){
+                auto pidParam = this->get_parameter(param);
+                auto i_minValStr = pidParam.value_to_string();
+                RCLCPP_INFO(this->get_logger(), "i_min: %s", i_minValStr.c_str());
+                response->i_min = std::stod(i_minValStr);
+            }
+            else if(pidParamName.compare("i_max") == 0){
+                auto pidParam = this->get_parameter(param);
+                auto i_maxValStr = pidParam.value_to_string();
+                RCLCPP_INFO(this->get_logger(), "i_max: %s", i_maxValStr.c_str());
+                response->i_max = std::stod(i_maxValStr);
+            }
+            else if(pidParamName.compare("antiwindup") == 0){
+                auto pidParam = this->get_parameter(param);
+                auto antiwindupValStr = pidParam.value_to_string();
+                RCLCPP_INFO(this->get_logger(), "antiwindup: %s", antiwindupValStr.c_str());
+                response->antiwindup = to_bool(antiwindupValStr);
+            }
+            else{
+                auto pidParam = this->get_parameter(param);
+                RCLCPP_WARN(this->get_logger(), "Unknown PID parameter: {%s: %s}", param, pidParam.value_to_string().c_str());
+            }
+        }
+    }
+}
+
+} // namespace parameter_serverGetRobots
