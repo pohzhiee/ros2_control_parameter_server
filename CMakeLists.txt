@@ -1,5 +1,5 @@
 cmake_minimum_required(VERSION 3.5)
-project(my_parameter_server)
+project(ros2_control_parameter_server)
 
 # Default to C99
 if(NOT CMAKE_C_STANDARD)
@@ -32,24 +32,24 @@ if(BUILD_TESTING)
   ament_lint_auto_find_test_dependencies()
 endif()
 
-add_library(my_parameter_server SHARED src/parameter_server.cpp)
-target_include_directories(my_parameter_server PUBLIC include)
+add_library(ros2_control_parameter_server SHARED src/parameter_server.cpp)
+target_include_directories(ros2_control_parameter_server PUBLIC include)
 ament_target_dependencies(
-  my_parameter_server
+  ros2_control_parameter_server
   rclcpp
   controller_parameter_server
   parameter_server_interfaces
 )
 
 install(
-  TARGETS my_parameter_server
+  TARGETS ros2_control_parameter_server
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
 )
 
 add_executable(param_server_exec src/param_server_exec.cpp)
-target_link_libraries(param_server_exec my_parameter_server)
+target_link_libraries(param_server_exec ros2_control_parameter_server)
 ament_target_dependencies(param_server_exec rclcpp controller_parameter_server)
 ament_export_include_directories(
   include
