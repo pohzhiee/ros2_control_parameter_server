@@ -10,6 +10,7 @@
 #include "parameter_server_interfaces/srv/get_controller_joints.hpp"
 #include "parameter_server_interfaces/srv/get_controller_pid.hpp"
 #include "parameter_server_interfaces/srv/get_robots.hpp"
+#include "parameter_server_interfaces/srv/get_all_pid.hpp"
 #include "rclcpp/rclcpp.hpp"
 
 namespace parameter_server
@@ -19,6 +20,7 @@ namespace parameter_server
   using GetControllers = parameter_server_interfaces::srv::GetControllers;
   using GetRobots = parameter_server_interfaces::srv::GetRobots;
   using GetControllerPid = parameter_server_interfaces::srv::GetControllerPid;
+  using GetAllPid = parameter_server_interfaces::srv::GetAllPid;
   using namespace std::chrono_literals;
 
 class ParameterServer : public controller_parameter_server::ParameterServer
@@ -34,6 +36,7 @@ private:
   rclcpp::Service<GetControllers>::SharedPtr get_controllers_srv_;
   rclcpp::Service<GetRobots>::SharedPtr get_robots_srv_;
   rclcpp::Service<GetControllerPid>::SharedPtr get_controller_pid_srv_;
+  rclcpp::Service<GetAllPid>::SharedPtr get_all_pid_srv_;
 
 void handle_GetAllJoints(const std::shared_ptr<rmw_request_id_t> request_header,  
 const std::shared_ptr<GetAllJoints::Request> request,  const std::shared_ptr<GetAllJoints::Response> response);
@@ -50,6 +53,8 @@ const std::shared_ptr<GetRobots::Request> request,  const std::shared_ptr<GetRob
 void handle_GetControllerPid(const std::shared_ptr<rmw_request_id_t> request_header,  
 const std::shared_ptr<GetControllerPid::Request> request,  const std::shared_ptr<GetControllerPid::Response> response);
 
+void handle_GetAllPid(const std::shared_ptr<rmw_request_id_t> request_header,  
+const std::shared_ptr<GetAllPid::Request> request,  const std::shared_ptr<GetAllPid::Response> response);
 };
 
 }  // namespace parameter_server

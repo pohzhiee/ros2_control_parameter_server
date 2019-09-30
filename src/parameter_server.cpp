@@ -33,6 +33,9 @@ ParameterServer::ParameterServer() : controller_parameter_server::ParameterServe
 
     auto fcn5 = std::bind(&ParameterServer::handle_GetControllerPid, this, _1, _2, _3);
     get_controller_pid_srv_ = this->create_service<GetControllerPid>("GetControllerPid", fcn5, rmw_qos_profile_services_default);
+
+    auto fcn6 = std::bind(&ParameterServer::handle_GetAllPid, this, _1, _2, _3);
+    get_all_pid_srv_ = this->create_service<GetAllPid>("GetAllPid", fcn6, rmw_qos_profile_services_default);
 }
 
 void ParameterServer::handle_GetAllJoints(const std::shared_ptr<rmw_request_id_t> request_header,
@@ -274,7 +277,7 @@ const std::shared_ptr<GetControllerPid::Request> request,  const std::shared_ptr
             if(pidParamName.compare("p") == 0){
                 auto pidParam = this->get_parameter(param);
                 auto pValStr = pidParam.value_to_string();
-                RCLCPP_INFO(this->get_logger(), "p: %s", pValStr.c_str());
+                RCLCPP_DEBUG(this->get_logger(), "p: %s", pValStr.c_str());
                 response->p = std::stod(pValStr);
             }
             else if(pidParamName.compare("i") == 0){
@@ -312,6 +315,72 @@ const std::shared_ptr<GetControllerPid::Request> request,  const std::shared_ptr
                 RCLCPP_WARN(this->get_logger(), "Unknown PID parameter: {%s: %s}", param, pidParam.value_to_string().c_str());
             }
         }
+    }
+}
+
+
+
+void ParameterServer::handle_GetAllPid(const std::shared_ptr<rmw_request_id_t> request_header,  
+const std::shared_ptr<GetAllPid::Request> request,  const std::shared_ptr<GetAllPid::Response> response){
+    (void)request_header;
+    response->joints={};
+    response->p={};
+    response->i={};
+    response->d={};
+    response->i_min={};
+    response->i_max={};
+    auto robot_name = request->robot;
+    auto param_list = this->list_parameters({""}, 10);
+
+    // Get all controllers
+    auto getControllerReq = std::make_shared<GetControllers::Request>();
+    auto getControllerResp = std::make_shared<GetControllers::Response>();
+    getControllerReq->robot = robot_name;
+    
+    handle_GetControllers(nullptr, getControllerReq, getControllerResp);
+    auto controllers = getControllerResp->controllers;
+
+    struct Pid{
+        double p;
+        double i;
+        double d;
+        double i_min;
+        double i_max;
+    };
+    // Get joints and pids for the all the controllers
+    std::unordered_map<std::string, Pid> joint_pid_map = {};
+    for(auto &controller : controllers){
+        // Get joints
+        auto getControllerJointReq = std::make_shared<GetControllerJoints::Request>();
+        auto getControllerJointResp = std::make_shared<GetControllerJoints::Response>();
+        getControllerJointReq->controller = controller;
+        handle_GetControllerJoints(nullptr, getControllerJointReq, getControllerJointResp); 
+        // Get Pid
+        auto getControllerPidReq = std::make_shared<GetControllerPid::Request>();
+        auto getControllerPidResp = std::make_shared<GetControllerPid::Response>();
+        getControllerPidReq->controller = controller;
+        handle_GetControllerPid(nullptr, getControllerPidReq, getControllerPidResp);
+        auto pid = Pid();
+        pid.p = getControllerPidResp->p;
+        pid.i = getControllerPidResp->i;
+        pid.d = getControllerPidResp->d;
+        pid.i_min = getControllerPidResp->i_min;
+        pid.i_max = getControllerPidResp->i_max;
+
+        for(auto &joint : getControllerJointResp->joints){
+            joint_pid_map[joint] = pid; 
+        }
+    }
+
+    for(auto &pair : joint_pid_map){
+        auto joint_name = pair.first;
+        auto pid = pair.second;
+        response->joints.push_back(joint_name);
+        response->p.push_back(pid.p);
+        response->i.push_back(pid.i);
+        response->d.push_back(pid.d);
+        response->i_min.push_back(pid.i_min);
+        response->i_max.push_back(pid.i_max);
     }
 }
 
