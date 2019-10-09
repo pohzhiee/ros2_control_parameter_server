@@ -312,7 +312,7 @@ const std::shared_ptr<GetControllerPid::Request> request,  const std::shared_ptr
             }
             else{
                 auto pidParam = this->get_parameter(param);
-                RCLCPP_WARN(this->get_logger(), "Unknown PID parameter: {%s: %s}", param, pidParam.value_to_string().c_str());
+                RCLCPP_WARN(this->get_logger(), "Unknown PID parameter: {%s: %s}", param.c_str(), pidParam.value_to_string().c_str());
             }
         }
     }

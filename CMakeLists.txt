@@ -48,6 +48,9 @@ install(
   RUNTIME DESTINATION bin
 )
 
+set (CMAKE_CXX_FLAGS_DEBUG "${CMAKE_CXX_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address")
+set (CMAKE_SHARED_LINKER_FLAGS "${CMAKE_STATIC_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=address -lasan")
+#set (CMAKE_EXE_LINKER_FLAGS_DEBUG "${CMAKE_STATIC_LINKER_FLAGS_DEBUG} -fno-omit-frame-pointer -fsanitize=thread -static-libtsan")
 add_executable(param_server_exec src/param_server_exec.cpp)
 target_link_libraries(param_server_exec ros2_control_parameter_server)
 ament_target_dependencies(param_server_exec rclcpp controller_parameter_server)
