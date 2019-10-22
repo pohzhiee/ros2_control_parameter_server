@@ -6,9 +6,9 @@ if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
 endif()
 
-# Default to C++14
+# Default to C++17 (for filesystem implementation)
 if(NOT CMAKE_CXX_STANDARD)
-  set(CMAKE_CXX_STANDARD 14)
+  set(CMAKE_CXX_STANDARD 17)
 endif()
 
 if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
@@ -20,17 +20,12 @@ find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
 find_package(controller_parameter_server REQUIRED)
 find_package(parameter_server_interfaces REQUIRED)
+find_package(yaml-cpp REQUIRED)
 
-if(BUILD_TESTING)
-  find_package(ament_lint_auto REQUIRED)
-  # the following line skips the linter which checks for copyrights
-  # uncomment the line when a copyright and license is not present in all source files
-  #set(ament_cmake_copyright_FOUND TRUE)
-  # the following line skips cpplint (only works in a git repo)
-  # uncomment the line when this package is not in a git repo
-  #set(ament_cmake_cpplint_FOUND TRUE)
-  ament_lint_auto_find_test_dependencies()
-endif()
+message(STATUS "yaml-cpp dir ${YAML_CPP_INCLUDE_DIR}")
+add_library(yaml_parser SHARED src/yaml_parser.cpp)
+target_include_directories(yaml_parser PUBLIC include)
+ament_target_dependencies(yaml_parser yaml-cpp)
 
 add_library(ros2_control_parameter_server SHARED src/parameter_server.cpp)
 target_include_directories(ros2_control_parameter_server PUBLIC include)
