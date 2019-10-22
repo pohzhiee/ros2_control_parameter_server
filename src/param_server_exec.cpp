@@ -1,5 +1,4 @@
 #include <memory>
-#include <controller_parameter_server/parameter_server.hpp>
 #include <parameter_server/parameter_server.hpp>
 
 void

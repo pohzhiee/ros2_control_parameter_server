@@ -12,9 +12,6 @@
 #include "yaml-cpp/yaml.h"
 
 namespace parameter_server {
-
-
-
     class YamlParser {
     public:
         YamlParser() = default;

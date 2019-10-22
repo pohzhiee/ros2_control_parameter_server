@@ -39,7 +39,7 @@ namespace parameter_server {
             if (root.Type() == YAML::NodeType::Sequence) {
                 size_t index = 0;
                 for (auto root_it = root.begin(); root_it != root.end(); ++root_it) {
-                    get_key_values(*root_it, key + separator + std::to_string((index++)), key_values);
+                    get_key_values(*root_it, key + separator + std::to_string(index++), key_values);
                 }
             }
         }

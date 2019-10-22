@@ -1,5 +1,6 @@
 #include "parameter_server/parameter_server.hpp"
 
+#include "parameter_server/yaml_parser.hpp"
 #include <algorithm>
 #include <string>
 #include <sstream>
@@ -17,7 +18,9 @@ namespace parameter_server {
 
     using namespace std::placeholders;
 
-    ParameterServer::ParameterServer() : controller_parameter_server::ParameterServer() {
+    ParameterServer::ParameterServer(const rclcpp::NodeOptions & options)
+            : rclcpp::Node("parameter_server", options)
+    {
         auto fcn = std::bind(&ParameterServer::handle_GetAllJoints, this, _1, _2, _3);
         get_all_joints_srv_ = this->create_service<GetAllJoints>("GetAllControlJoints", fcn,
                                                                  rmw_qos_profile_services_default);
@@ -366,6 +369,24 @@ namespace parameter_server {
         (void) request_header;
         (void) request;
         response->update_rate = 100;
+    }
+
+    void ParameterServer::load_parameters(const std::string &yaml_config_file) {
+        if (yaml_config_file.empty()) {
+            throw std::runtime_error("yaml config file path is empty");
+        }
+
+        YamlParser parser;
+        parser.parse(yaml_config_file);
+
+        auto key_values = parser.get_key_value_pairs();
+        for (const auto &pair : key_values) {
+            this->set_parameters({rclcpp::Parameter(pair.first, pair.second)});
+        }
+    }
+
+    void ParameterServer::load_parameters(const std::string &key, const std::string &value) {
+        this->set_parameters({rclcpp::Parameter(key, value)});
     }
 
 } // namespace parameter_serverGetRobots

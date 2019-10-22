@@ -4,7 +4,6 @@
 #include <memory>
 #include <string>
 
-#include "controller_parameter_server/parameter_server.hpp"
 #include "parameter_server_interfaces/srv/get_all_joints.hpp"
 #include "parameter_server_interfaces/srv/get_controllers.hpp"
 #include "parameter_server_interfaces/srv/get_controller_joints.hpp"
@@ -24,10 +23,17 @@ namespace parameter_server {
     using GetGymUpdateRate = parameter_server_interfaces::srv::GetGymUpdateRate;
     using namespace std::chrono_literals;
 
-    class ParameterServer : public controller_parameter_server::ParameterServer {
+    class ParameterServer : public rclcpp::Node{
     public:
-        ParameterServer();
+        explicit ParameterServer(
+                const rclcpp::NodeOptions & options = (
+                        rclcpp::NodeOptions()
+                                .allow_undeclared_parameters(true)
+                                .automatically_declare_parameters_from_overrides(true)));
 
+        void load_parameters(const std::string & yaml_config_file);
+
+        void load_parameters(const std::string & key, const std::string & value);
     private:
         rclcpp::Service<GetAllJoints>::SharedPtr get_all_joints_srv_;
         rclcpp::Service<GetControllerJoints>::SharedPtr get_controller_joints_srv_;
@@ -64,6 +70,9 @@ namespace parameter_server {
         void handle_GetGymUpdateRate(const std::shared_ptr<rmw_request_id_t> request_header,
                                      const std::shared_ptr<GetGymUpdateRate::Request> request,
                                      const std::shared_ptr<GetGymUpdateRate::Response> response);
+
+
+
     };
 
 }  // namespace parameter_server

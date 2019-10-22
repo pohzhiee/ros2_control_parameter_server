@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 project(ros2_control_parameter_server)
 
 # Default to C99
@@ -18,26 +18,29 @@ endif()
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(rclcpp REQUIRED)
-find_package(controller_parameter_server REQUIRED)
 find_package(parameter_server_interfaces REQUIRED)
 find_package(yaml-cpp REQUIRED)
 
 message(STATUS "yaml-cpp dir ${YAML_CPP_INCLUDE_DIR}")
 add_library(yaml_parser SHARED src/yaml_parser.cpp)
 target_include_directories(yaml_parser PUBLIC include)
-ament_target_dependencies(yaml_parser yaml-cpp)
+if(CMAKE_CXX_COMPILER_ID STREQUAL "GNU")
+  target_link_libraries(yaml_parser PRIVATE "stdc++fs" yaml-cpp)
+else()
+  target_link_libraries(yaml_parser PRIVATE yaml-cpp)
+endif()
 
 add_library(ros2_control_parameter_server SHARED src/parameter_server.cpp)
 target_include_directories(ros2_control_parameter_server PUBLIC include)
+target_link_libraries(ros2_control_parameter_server yaml_parser)
 ament_target_dependencies(
   ros2_control_parameter_server
   rclcpp
-  controller_parameter_server
   parameter_server_interfaces
 )
 
 install(
-  TARGETS ros2_control_parameter_server
+  TARGETS ros2_control_parameter_server yaml_parser
   ARCHIVE DESTINATION lib
   LIBRARY DESTINATION lib
   RUNTIME DESTINATION bin
