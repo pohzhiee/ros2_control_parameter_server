@@ -266,27 +266,27 @@ namespace parameter_server {
                 } else if (pidParamName == "i") {
                     auto pidParam = this->get_parameter(param);
                     auto iValStr = pidParam.value_to_string();
-                    RCLCPP_INFO(this->get_logger(), "i: %s", iValStr.c_str());
+                    RCLCPP_DEBUG(this->get_logger(), "i: %s", iValStr.c_str());
                     response->i = std::stod(iValStr);
                 } else if (pidParamName == "d") {
                     auto pidParam = this->get_parameter(param);
                     auto dValStr = pidParam.value_to_string();
-                    RCLCPP_INFO(this->get_logger(), "d: %s", dValStr.c_str());
+                    RCLCPP_DEBUG(this->get_logger(), "d: %s", dValStr.c_str());
                     response->d = std::stod(dValStr);
                 } else if (pidParamName == "i_min") {
                     auto pidParam = this->get_parameter(param);
                     auto i_minValStr = pidParam.value_to_string();
-                    RCLCPP_INFO(this->get_logger(), "i_min: %s", i_minValStr.c_str());
+                    RCLCPP_DEBUG(this->get_logger(), "i_min: %s", i_minValStr.c_str());
                     response->i_min = std::stod(i_minValStr);
                 } else if (pidParamName == "i_max") {
                     auto pidParam = this->get_parameter(param);
                     auto i_maxValStr = pidParam.value_to_string();
-                    RCLCPP_INFO(this->get_logger(), "i_max: %s", i_maxValStr.c_str());
+                    RCLCPP_DEBUG(this->get_logger(), "i_max: %s", i_maxValStr.c_str());
                     response->i_max = std::stod(i_maxValStr);
                 } else if (pidParamName == "antiwindup") {
                     auto pidParam = this->get_parameter(param);
                     auto antiwindupValStr = pidParam.value_to_string();
-                    RCLCPP_INFO(this->get_logger(), "antiwindup: %s", antiwindupValStr.c_str());
+                    RCLCPP_DEBUG(this->get_logger(), "antiwindup: %s", antiwindupValStr.c_str());
                     response->antiwindup = to_bool(antiwindupValStr);
                 } else {
                     auto pidParam = this->get_parameter(param);
