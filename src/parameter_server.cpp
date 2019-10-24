@@ -82,9 +82,9 @@ namespace parameter_server {
                 if (pos != std::string::npos && pos == endPos - length) {
                     // Get the robot name
                     std::vector<size_t> dotPos = {};
-                    for (size_t i = 0; i < paramName.size(); i++) {
-                        if (paramName[i] == '.') {
-                            dotPos.push_back(i);
+                    for (size_t j = 0; j < paramName.size(); j++) {
+                        if (paramName[j] == '.') {
+                            dotPos.push_back(j);
                         }
                     }
                     auto robotName = paramName.substr(dotPos[0] + 1, dotPos[1] - dotPos[0] - 1);
@@ -106,40 +106,6 @@ namespace parameter_server {
                 }
             }
         }
-/* 
-    for (auto &paramName : param_list.names)
-    {
-        // find parameters containing .joints.
-        auto pos = paramName.find(".joints.");
-        if (pos != std::string::npos)
-        {
-            // Get the robot name
-            std::vector<size_t> dotPos = {};
-            for (size_t i = 0; i < paramName.size(); i++)
-            {
-                if (paramName[i] == '.')
-                {
-                    dotPos.push_back(i);
-                }
-            }
-            auto robotName = paramName.substr(dotPos[0] + 1, dotPos[1] - dotPos[0] - 1);
-            // Check that the joints belong to the correct robot
-            if (robotName.compare(request->robot) == 0)
-            {
-                // Add the joints to the list
-                auto jointParam = this->get_parameter(paramName);
-                auto jointName = jointParam.value_to_string();
-                auto unique = true;
-                for (auto &j : jointNames)
-                {
-                    if (j.compare(jointName) == 0)
-                        unique = false;
-                }
-                if (unique)
-                    jointNames.push_back(jointName);
-            }
-        } 
-    }*/
         // for (auto &joint : jointNames)
         // {
         //     RCLCPP_INFO(this->get_logger(), "Joint names: %s", joint.c_str());
