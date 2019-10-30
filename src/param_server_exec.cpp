@@ -17,7 +17,10 @@ int main(int argc, char ** argv)
     print_usage();
     return -1;
   }
-  auto ps = std::make_shared<parameter_server::ParameterServer>();
+  auto nodeOptions = rclcpp::NodeOptions();
+  nodeOptions.start_parameter_services(false);
+  nodeOptions.allow_undeclared_parameters(true);
+  auto ps = std::make_shared<parameter_server::ParameterServer>(nodeOptions);
   ps->load_parameters(argv[1]);
 
   rclcpp::spin(ps);
